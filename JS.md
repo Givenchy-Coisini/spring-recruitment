@@ -75,6 +75,7 @@ function myNew () {
 - promise.race 和 promise.all的区别
 - async await
 - 如何顺序执行10个异步任务
+- promiseA+规范
 ## 8.详述节流和防抖
 - 手写节流和防抖
 ## 9.简述es6的新特性
