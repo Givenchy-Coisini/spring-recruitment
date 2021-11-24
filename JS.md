@@ -17,6 +17,7 @@ fyj.sayName() // 'fyj'
 ```
 
 `new`通过Person创建出来的实例可以访问到构造函数的属性
+
 `new`通过Person创建出来的实例可以访问到构造函数原型链上的方法和属性
 
 在构造函数内加上返回值是什么呢？
@@ -29,7 +30,9 @@ function Car (price) {
 let bigCar = new Car(90)
 console.log(bigCar.price) // 90
 ```
+
 返回值是原始值的时候，那么这返回值没有任何意义
+
 **2、返回引用数据类型**
 ```js
 function Car(price) {
@@ -39,6 +42,7 @@ function Car(price) {
 let bigCar = new Car(90)
 console.log(bigCar.price,bigCar.km)  //undefined ,200
 ```
+
 返回值是引用数据类型的时候，那么这个返回值就会被正常使用
 
 **new的实现**
@@ -60,6 +64,14 @@ function myNew () {
 }
 ```
 ## 2.this指向问题
+`this` 参数是面向对象js编程的一个重要组成部分，代表函数调用的相关联的对象，也称为函数上下文。
+
+`this`指向大致分为三种调用模式
+- 全局模式
+- 方法模式
+- 函数模式
+
+其中函数模式又分为普通函数调用、带call/apply/bind的函数调用、构造函数调用、箭头函数调用
 - `js`函数中如何绑定`this`到新对象上
 - `bind`和`call`有什么区别
 ## 3.什么是js闭包
@@ -88,7 +100,26 @@ function myNew () {
 ## 15.arguments 如何转数组
 ## 16.移动端和pc端click事件为什么差了300ms
 ## 17. == 和 ===区别
-## 18. 原型和原型连是什么
+## 18. 原型和原型链是什么
+- **构造函数创建对象**
+```js
+function Person() {
+
+}
+let person = new Person()
+person.name='name'
+console.log(person.name)
+```
+
+`Person`是一个构造函数，通过`new`创建了一个实例对象`person`
+```js
+function Person() {
+
+}
+Person.prototype.name = 'name'
+let person1 = new Person()
+let person2 = new Person()
+```
 ## 19.三句话概括所有值传递类型、引用传递类型 以及如何用引用的方式传递值类型
 ## 20.js基础类型
 - null undefined 区别
