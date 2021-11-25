@@ -136,16 +136,26 @@ function myNew () {
 function Person(name) {
   // 实例成员
   this.name = name;
+  this.sing = function () {
+    console.log("我爱唱歌");
+  };
 }
 Person.sex = "man";
-let person = new Person('name');
+let person = new Person("name");
+let person1 = new Person();
+let person2 = new Person();
 console.log(person.name); //name
-console.log(person.sex) // undefined  实例无法访问sex属性
+console.log(person.sex); // undefined  实例无法访问sex属性
 
-console.log(Person.name) //Person 通过构造函数无法访问实例成员
-console.log(Person.sex) // man  通过构造函数可以直接访问静态成员
+console.log(Person.name); //Person 通过构造函数无法访问实例成员
+console.log(Person.sex); // man  通过构造函数可以直接访问静态成员
+
+person1.sing(); //我爱唱歌
+person2.sing(); //我爱唱歌
+console.log(person1.sing === person2.sing); //false
 ```
 
+很明显，person1 和 person2 指向的不是一个地方。 所以 在构造函数上通过 this 来添加方法的方式来生成实例，每次生成实例，都是新开辟一个内存空间存方法。这样会导致内存的极大浪费，从而影响性能。
 `Person`是一个构造函数，通过`new`创建了一个实例对象`person`
 构造函数分为实例成员和静态成员
 **实例成员：** 实例成员就是在构造函数内部，通过`this`添加的成员，实例成员只能通过实例化的对象来访问。
@@ -164,7 +174,23 @@ console.log(person2.name); // name
 
 每一个`JavaScript`对象在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型“继承”属性。
 
-**__proto__**
+通过原型分配的函数，是所有对象共享的    原型的作用就是共享方法
+
+```js
+function Star(name) {
+  this.name = name;
+}
+Star.prototype.sing = function () {
+  console.log("我爱唱歌", this.name);
+};
+let stu1 = new Star("小红");
+let stu2 = new Star("小蓝");
+stu1.sing(); //我爱唱歌 小红
+stu2.sing(); //我爱唱歌 小蓝
+console.log(stu1.sing === stu2.sing); //true
+```
+
+\***\*proto\*\***
 每一个`JavaScript`对象都具有一个属性，叫`__proto__`，这个属性会指向该对象的原型
 
 ```js
@@ -173,12 +199,14 @@ console.log(person.__proto__ === Person.prototype); //true
 
 **constructor**
 原型指向构造函数是有的:`constructor`,每个原型都有一个`constructor`属性指向相关联的构造函数
+
 ```js
-console.log(Person === Person.prototype.constructor)  // true
+console.log(Person === Person.prototype.constructor); // true
 ```
 
 当读取实例的属性的时候，如果找不到，就去查找与对象关联的原型种的属性，如果还查找不到，就去原型的原型中去查找
-![原型链](/img/dce869109f6474978d24bc1e7da7464a_tplv-t2oaga2asx-watermark.awebp)
+![原型链](/img/原型链.png)
+
 ## 19.三句话概括所有值传递类型、引用传递类型 以及如何用引用的方式传递值类型
 
 ## 20.js 基础类型
