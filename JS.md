@@ -80,9 +80,194 @@ function myNew () {
 - 函数模式
 
 其中函数模式又分为普通函数调用、带 call/apply/bind 的函数调用、构造函数调用、箭头函数调用
+`this`指向的顺序口诀：箭头函数、new、bind、apply 和 call、欧比届点（obj.）、直接调用、不在函数里。
 
+**全局模式**
+```js
+cosnole.log(this === window); // true
+
+a = 21;
+console.log(window.a); //21
+
+this.b = "fyj";
+console.log(window.b); //21
+console.log(b); //21
+```
+**普通函数调用**
+当普通的函数，直接调用的时候，一般来说分两种情况:
+
+严格模式绑定到 undefined
+非严格模式绑定到全局对象 window
+```js
+function foo(){
+  console.log(this);  
+}
+function bar(){
+  "use strict"; 
+  console.log(this);
+}
+foo() // window
+bar() // undefined
+```
+
+**call/apply/bind函数调用**
+call/apply 这两个函数对象到方法能立即执行某个函数，并且将函数中的this绑定到我们提供到对象上去
+bind 方法永久的绑定函数中的this到指定对象上，并返回一个新函数，将来这个函数无论怎么调用都可以
+```js
+function foo(){
+  console.log(this);  
+}
+function bar(){
+  console.log(this);
+}
+foo.call({name:'小米'}); // {name: "小米"}
+
+const bar1 = bar.bind({num:123})
+bar1() // {num: 123}  多次bind只认第一次bind 的值
+```
+
+**对象属性方法调用**
+作为对象属性方法调用，都指向前面调用函数都那个对象。当然有的时候会出现各种变种或者干扰的面试题
+
+```js
+const student = {
+  name: "tom",
+
+  fn: function () {
+    return this;
+  },
+};
+console.log(student.fn() === student);
+```
+
+**构造函数调用或者类上下文**
+构造函数作为JavaScript创建对象的那只大母鸡（实际上类是构造函数的语法糖），通常程序界有个段子叫做new 一个对象，谁还敢说程序员（媛）没有对象的,这种方式调用this指向的是你new出来的那个对象实例本身:
+```js
+function Person(name){
+  console.log(this);
+  this.name = name
+}
+
+const p = new Person('tom')
+console.log(p);
+```
+
+**箭头函数中的this**
+箭头函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
+```js
+var obj = {
+  name: "tom",
+  foo() {
+    setTimeout(() => {
+      console.log(this);
+    }, 1000);
+  },
+};
+
+obj.foo() // obj
+```
 - `js`函数中如何绑定`this`到新对象上
+> 可以采用`call` `apply` `bind`来进行绑定
 - `bind`和`call`有什么区别
+> `call``apply``bind`三者都是来改变this指向的  call第一个参数是this 第二个参数是一个一个的  apply的参数是一个数组
+`bind`没有要求 可以是一个一个的 也可以是一个数组  call和apply函数是直接执行的 而bind函数会返回一个新的函数 什么时候想调用的时候才会执行
+
+- 手写`call`
+```js
+//call 改变了this的指向 指向到某对象
+// 函数执行了
+
+// 所以我们模拟的步骤可以分为：
+// 将函数设为对象的属性
+// 执行该函数
+// 删除该函数
+// 第三版
+Function.prototype.call2 = function (context) {
+    var context = context || window; // this可以为null 这个时候指向window
+    context.fn = this;
+
+    var args = []; //参数
+    for(var i = 1, len = arguments.length; i < len; i++) {
+        args.push('arguments[' + i + ']');
+    }
+
+    var result = eval('context.fn(' + args +')');
+
+    delete context.fn
+    return result;
+}
+
+// 测试一下
+var value = 2;
+
+var obj = {
+    value: 1
+}
+
+function bar(name, age) {
+    console.log(this.value);
+    return {
+        value: this.value,
+        name: name,
+        age: age
+    }
+}
+
+bar.call(null); // 2
+
+console.log(bar.call2(obj, 'kevin', 18));
+// 1
+// Object {
+//    value: 1,
+//    name: 'kevin',
+//    age: 18
+// }
+```
+- 手写apply
+```js
+Function.prototype.apply = function (context, arr) {
+    var context = Object(context) || window;
+    context.fn = this;
+
+    var result;
+    if (!arr) {
+        result = context.fn();
+    }
+    else {
+        var args = [];
+        for (var i = 0, len = arr.length; i < len; i++) {
+            args.push('arr[' + i + ']');
+        }
+        result = eval('context.fn(' + args + ')')
+    }
+
+    delete context.fn
+    return result;
+}
+```
+- 手写bind
+```js
+Function.prototype.bind2 = function (context) {
+
+    if (typeof this !== "function") {
+      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var self = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    var fNOP = function () {};
+
+    var fbound = function () {
+        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
+    }
+
+    fNOP.prototype = this.prototype;
+    fbound.prototype = new fNOP();
+
+    return fbound;
+
+}
+```
 
 ## 3.什么是 js 闭包
 
@@ -174,7 +359,7 @@ console.log(person2.name); // name
 
 每一个`JavaScript`对象在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型“继承”属性。
 
-通过原型分配的函数，是所有对象共享的    原型的作用就是共享方法
+通过原型分配的函数，是所有对象共享的 原型的作用就是共享方法
 
 ```js
 function Star(name) {
