@@ -275,6 +275,11 @@ Function.prototype.bind2 = function (context) {
 
 ## 5.详细描述 es5 和 es6 中的作用域
 
+> 作用域是程序源代码中定义变量的区域。
+
+> 作用域规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。
+`js`采用词法作用域，函数的作用域在函数定义的时候就已经决定了。 而动态作用域是在函数调用的时候才决定
+
 ## 6.详细描述异步 EventLoop 机制
 
 ## 7.Promise.all 的用法
@@ -375,7 +380,7 @@ stu2.sing(); //我爱唱歌 小蓝
 console.log(stu1.sing === stu2.sing); //true
 ```
 
-\***\*proto\*\***
+- proto
 每一个`JavaScript`对象都具有一个属性，叫`__proto__`，这个属性会指向该对象的原型
 
 ```js
