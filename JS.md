@@ -83,6 +83,7 @@ function myNew () {
 `this`指向的顺序口诀：箭头函数、new、bind、apply 和 call、欧比届点（obj.）、直接调用、不在函数里。
 
 **全局模式**
+
 ```js
 cosnole.log(this === window); // true
 
@@ -93,37 +94,40 @@ this.b = "fyj";
 console.log(window.b); //21
 console.log(b); //21
 ```
+
 **普通函数调用**
 当普通的函数，直接调用的时候，一般来说分两种情况:
 
 严格模式绑定到 undefined
 非严格模式绑定到全局对象 window
+
 ```js
-function foo(){
-  console.log(this);  
-}
-function bar(){
-  "use strict"; 
+function foo() {
   console.log(this);
 }
-foo() // window
-bar() // undefined
+function bar() {
+  "use strict";
+  console.log(this);
+}
+foo(); // window
+bar(); // undefined
 ```
 
-**call/apply/bind函数调用**
-call/apply 这两个函数对象到方法能立即执行某个函数，并且将函数中的this绑定到我们提供到对象上去
-bind 方法永久的绑定函数中的this到指定对象上，并返回一个新函数，将来这个函数无论怎么调用都可以
+**call/apply/bind 函数调用**
+call/apply 这两个函数对象到方法能立即执行某个函数，并且将函数中的 this 绑定到我们提供到对象上去
+bind 方法永久的绑定函数中的 this 到指定对象上，并返回一个新函数，将来这个函数无论怎么调用都可以
+
 ```js
-function foo(){
-  console.log(this);  
-}
-function bar(){
+function foo() {
   console.log(this);
 }
-foo.call({name:'小米'}); // {name: "小米"}
+function bar() {
+  console.log(this);
+}
+foo.call({ name: "小米" }); // {name: "小米"}
 
-const bar1 = bar.bind({num:123})
-bar1() // {num: 123}  多次bind只认第一次bind 的值
+const bar1 = bar.bind({ num: 123 });
+bar1(); // {num: 123}  多次bind只认第一次bind 的值
 ```
 
 **对象属性方法调用**
@@ -141,19 +145,21 @@ console.log(student.fn() === student);
 ```
 
 **构造函数调用或者类上下文**
-构造函数作为JavaScript创建对象的那只大母鸡（实际上类是构造函数的语法糖），通常程序界有个段子叫做new 一个对象，谁还敢说程序员（媛）没有对象的,这种方式调用this指向的是你new出来的那个对象实例本身:
+构造函数作为 JavaScript 创建对象的那只大母鸡（实际上类是构造函数的语法糖），通常程序界有个段子叫做 new 一个对象，谁还敢说程序员（媛）没有对象的,这种方式调用 this 指向的是你 new 出来的那个对象实例本身:
+
 ```js
-function Person(name){
+function Person(name) {
   console.log(this);
-  this.name = name
+  this.name = name;
 }
 
-const p = new Person('tom')
+const p = new Person("tom");
 console.log(p);
 ```
 
-**箭头函数中的this**
-箭头函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
+**箭头函数中的 this**
+箭头函数体内的 this 对象，就是定义时所在的对象，而不是使用时所在的对象。
+
 ```js
 var obj = {
   name: "tom",
@@ -164,15 +170,18 @@ var obj = {
   },
 };
 
-obj.foo() // obj
+obj.foo(); // obj
 ```
+
 - `js`函数中如何绑定`this`到新对象上
-> 可以采用`call` `apply` `bind`来进行绑定
+  > 可以采用`call` `apply` `bind`来进行绑定
 - `bind`和`call`有什么区别
-> `call``apply``bind`三者都是来改变this指向的  call第一个参数是this 第二个参数是一个一个的  apply的参数是一个数组
-`bind`没有要求 可以是一个一个的 也可以是一个数组  call和apply函数是直接执行的 而bind函数会返回一个新的函数 什么时候想调用的时候才会执行
+
+  > ` call``apply``bind `三者都是来改变 this 指向的 call 第一个参数是 this 第二个参数是一个一个的 apply 的参数是一个数组
+  > `bind`没有要求 可以是一个一个的 也可以是一个数组 call 和 apply 函数是直接执行的 而 bind 函数会返回一个新的函数 什么时候想调用的时候才会执行
 
 - 手写`call`
+
 ```js
 //call 改变了this的指向 指向到某对象
 // 函数执行了
@@ -183,39 +192,39 @@ obj.foo() // obj
 // 删除该函数
 // 第三版
 Function.prototype.call2 = function (context) {
-    var context = context || window; // this可以为null 这个时候指向window
-    context.fn = this;
+  var context = context || window; // this可以为null 这个时候指向window
+  context.fn = this;
 
-    var args = []; //参数
-    for(var i = 1, len = arguments.length; i < len; i++) {
-        args.push('arguments[' + i + ']');
-    }
+  var args = []; //参数
+  for (var i = 1, len = arguments.length; i < len; i++) {
+    args.push("arguments[" + i + "]");
+  }
 
-    var result = eval('context.fn(' + args +')');
+  var result = eval("context.fn(" + args + ")");
 
-    delete context.fn
-    return result;
-}
+  delete context.fn;
+  return result;
+};
 
 // 测试一下
 var value = 2;
 
 var obj = {
-    value: 1
-}
+  value: 1,
+};
 
 function bar(name, age) {
-    console.log(this.value);
-    return {
-        value: this.value,
-        name: name,
-        age: age
-    }
+  console.log(this.value);
+  return {
+    value: this.value,
+    name: name,
+    age: age,
+  };
 }
 
 bar.call(null); // 2
 
-console.log(bar.call2(obj, 'kevin', 18));
+console.log(bar.call2(obj, "kevin", 18));
 // 1
 // Object {
 //    value: 1,
@@ -223,50 +232,56 @@ console.log(bar.call2(obj, 'kevin', 18));
 //    age: 18
 // }
 ```
-- 手写apply
+
+- 手写 apply
+
 ```js
 Function.prototype.apply = function (context, arr) {
-    var context = Object(context) || window;
-    context.fn = this;
+  var context = Object(context) || window;
+  context.fn = this;
 
-    var result;
-    if (!arr) {
-        result = context.fn();
+  var result;
+  if (!arr) {
+    result = context.fn();
+  } else {
+    var args = [];
+    for (var i = 0, len = arr.length; i < len; i++) {
+      args.push("arr[" + i + "]");
     }
-    else {
-        var args = [];
-        for (var i = 0, len = arr.length; i < len; i++) {
-            args.push('arr[' + i + ']');
-        }
-        result = eval('context.fn(' + args + ')')
-    }
+    result = eval("context.fn(" + args + ")");
+  }
 
-    delete context.fn
-    return result;
-}
+  delete context.fn;
+  return result;
+};
 ```
-- 手写bind
+
+- 手写 bind
+
 ```js
 Function.prototype.bind2 = function (context) {
+  if (typeof this !== "function") {
+    throw new Error(
+      "Function.prototype.bind - what is trying to be bound is not callable"
+    );
+  }
 
-    if (typeof this !== "function") {
-      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
-    }
+  var self = this;
+  var args = Array.prototype.slice.call(arguments, 1);
+  var fNOP = function () {};
 
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-    var fNOP = function () {};
+  var fbound = function () {
+    self.apply(
+      this instanceof self ? this : context,
+      args.concat(Array.prototype.slice.call(arguments))
+    );
+  };
 
-    var fbound = function () {
-        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
-    }
+  fNOP.prototype = this.prototype;
+  fbound.prototype = new fNOP();
 
-    fNOP.prototype = this.prototype;
-    fbound.prototype = new fNOP();
-
-    return fbound;
-
-}
+  return fbound;
+};
 ```
 
 ## 3.什么是 js 闭包
@@ -278,7 +293,7 @@ Function.prototype.bind2 = function (context) {
 > 作用域是程序源代码中定义变量的区域。
 
 > 作用域规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。
-`js`采用词法作用域，函数的作用域在函数定义的时候就已经决定了。 而动态作用域是在函数调用的时候才决定
+> `js`采用词法作用域，函数的作用域在函数定义的时候就已经决定了。 而动态作用域是在函数调用的时候才决定
 
 ## 6.详细描述异步 EventLoop 机制
 
@@ -381,7 +396,7 @@ console.log(stu1.sing === stu2.sing); //true
 ```
 
 - proto
-每一个`JavaScript`对象都具有一个属性，叫`__proto__`，这个属性会指向该对象的原型
+  每一个`JavaScript`对象都具有一个属性，叫`__proto__`，这个属性会指向该对象的原型
 
 ```js
 console.log(person.__proto__ === Person.prototype); //true
@@ -412,6 +427,245 @@ console.log(Person === Person.prototype.constructor); // true
 
 ## 23.js 继承说一下
 
+- 原型链继承
+
+```js
+function Person() {
+  this.name = "kevin";
+}
+Person.prototype.getName = function () {
+  cosole.log(this.name);
+};
+function Child() {
+
+}
+Child.prototype = new Person()
+let child1 = new Child()
+console.log(child1.getName()) // kevin
+
+// 引用类型的属性被所有实例共享，举个例子：
+function Parent () {
+    this.names = ['kevin', 'daisy'];
+}
+
+function Child () {
+
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child();
+
+child1.names.push('yayu');
+
+console.log(child1.names); // ["kevin", "daisy", "yayu"]
+
+var child2 = new Child();
+
+console.log(child2.names); // ["kevin", "daisy", "yayu"]
+// 在创建 Child 的实例时，不能向Parent传参
+```
+
+- es6类继承
+```js
+class Father {
+        constructor(name){
+            this.name = name;
+        }
+        dance(){
+            return '我在跳舞';
+        }
+    }
+    class Son extends Father{
+        constructor(name,score){
+            super(name);
+            this.score = score;
+        }
+        sing(){
+            return this.name +','+this.dance();
+        }
+    }
+    let obj = new Son('小红',100);
+```
+
+- 借用构造函数（经典继承）
+```js
+function Parent () {
+    this.names = ['kevin', 'daisy'];
+}
+
+function Child () {
+    Parent.call(this);
+}
+
+var child1 = new Child();
+
+child1.names.push('yayu');
+
+console.log(child1.names); // ["kevin", "daisy", "yayu"]
+
+var child2 = new Child();
+
+console.log(child2.names); // ["kevin", "daisy"]
+// 优点：
+
+// 1.避免了引用类型的属性被所有实例共享
+
+// 2.可以在 Child 中向 Parent 传参
+// 缺点：
+
+// 方法都在构造函数中定义，每次创建实例都会创建一遍方法。
+```
+
+- 组合继承
+```js
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+
+function Child (name, age) {
+
+    Parent.call(this, name);
+
+    this.age = age;
+
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child('kevin', '18');
+
+child1.colors.push('black');
+
+console.log(child1.name); // kevin
+console.log(child1.age); // 18
+console.log(child1.colors); // ["red", "blue", "green", "black"]
+
+var child2 = new Child('daisy', '20');
+
+console.log(child2.name); // daisy
+console.log(child2.age); // 20
+console.log(child2.colors); // ["red", "blue", "green"]
+// 融合原型链继承和构造函数的优点，是 JavaScript 中最常用的继承模式。
+```
+- 原型式继承
+```js
+function createObj(o) {
+    function F(){}
+    F.prototype = o;
+    return new F();
+}
+// 就是 ES5 Object.create 的模拟实现，将传入的对象作为创建的对象的原型。
+// 缺点：
+// 包含引用类型的属性值始终都会共享相应的值，这点跟原型链继承一样。
+var person = {
+    name: 'kevin',
+    friends: ['daisy', 'kelly']
+}
+
+var person1 = createObj(person);
+var person2 = createObj(person);
+
+person1.name = 'person1';
+console.log(person2.name); // kevin
+
+person1.firends.push('taylor');
+console.log(person2.friends); // ["daisy", "kelly", "taylor"]
+// 注意：修改person1.name的值，person2.name的值并未发生改变，并不是因为person1和person2有独立的 name 值，而是因为person1.name = 'person1'，给person1添加了 name 值，并非修改了原型上的 name 值。
+```
+- 寄生式继承
+```js
+// 创建一个仅用于封装继承过程的函数，该函数在内部以某种形式来做增强对象，最后返回对象。
+function createObj (o) {
+    var clone = object.create(o);
+    clone.sayName = function () {
+        console.log('hi');
+    }
+    return clone;
+}
+// 缺点：跟借用构造函数模式一样，每次创建对象都会创建一遍方法。
+```
+-  寄生组合式继承
+```js
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+
+function Child (name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child('kevin', '18');
+
+console.log(child1)
+// 组合继承最大的缺点是会调用两次父构造函数。
+// 一次是设置子类型实例的原型的时候：
+Child.prototype = new Parent();
+// 一次在创建子类型实例的时候：
+var child1 = new Child('kevin', '18');
+// 回想下 new 的模拟实现，其实在这句中，我们会执行：
+Parent.call(this, name);
+// 在这里，我们又会调用了一次 Parent 构造函数。
+// 所以，在这个例子中，如果我们打印 child1 对象，我们会发现 Child.prototype 和 child1 都有一个属性为colors，属性值为['red', 'blue', 'green']。
+// 那么我们该如何精益求精，避免这一次重复调用呢？
+// 如果我们不使用 Child.prototype = new Parent() ，而是间接的让 Child.prototype 访问到 Parent.prototype 呢？
+// 看看如何实现：
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+
+function Child (name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+// 关键的三步
+var F = function () {};
+
+F.prototype = Parent.prototype;
+
+Child.prototype = new F();
+
+
+var child1 = new Child('kevin', '18');
+
+console.log(child1);
+// 最后我们封装一下这个继承方法：
+function object(o) {
+    function F() {}
+    F.prototype = o;
+    return new F();
+}
+
+function prototype(child, parent) {
+    var prototype = object(parent.prototype);
+    prototype.constructor = child;
+    child.prototype = prototype;
+}
+
+// 当我们使用的时候：
+prototype(Child, Parent);
+// 引用《JavaScript高级程序设计》中对寄生组合式继承的夸赞就是：
+// 这种方式的高效率体现它只调用了一次 Parent 构造函数，并且因此避免了在 Parent.prototype 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用 instanceof 和 isPrototypeOf。开发人员普遍认为寄生组合式继承是引用类型最理想的继承范式。
+```
 ## 24.数组有哪些方法
 
 ## 25.事件委托原理
@@ -422,64 +676,67 @@ console.log(Person === Person.prototype.constructor); // true
 
 - 有什么区别
 
-## 28.js创建对象的各种方式
+## 28.js 创建对象的各种方式
+
 - 工厂模式
+
 ```js
 function createPerson(name) {
-    var o = new Object();
-    o.name = name;
-    o.getName = function () {
-        console.log(this.name);
-    };
+  var o = new Object();
+  o.name = name;
+  o.getName = function () {
+    console.log(this.name);
+  };
 
-    return o;
+  return o;
 }
 
-var person1 = createPerson('kevin');
+var person1 = createPerson("kevin");
 // 缺点：对象无法识别，因为所有的实例都指向一个原型
 ```
 
 - 构造函数模式
+
 ```js
 function Person(name) {
-    this.name = name;
-    this.getName = function () {
-        console.log(this.name);
-    };
+  this.name = name;
+  this.getName = function () {
+    console.log(this.name);
+  };
 }
 
-var person1 = new Person('kevin');
+var person1 = new Person("kevin");
 // 优点：实例可以识别为一个特定的类型
 
 // 缺点：每次创建实例时，每个方法都要被创建一次
 ```
 
 - 构造函数模式优化
+
 ```js
 function Person(name) {
-    this.name = name;
-    this.getName = getName;
+  this.name = name;
+  this.getName = getName;
 }
 
 function getName() {
-    console.log(this.name);
+  console.log(this.name);
 }
 
-var person1 = new Person('kevin');
+var person1 = new Person("kevin");
 // 优点：解决了每个方法都要被重新创建的问题
 
 // 缺点：这叫啥封装……
 ```
 
 - 原型模式
+
 ```js
-function Person(name) {
+function Person(name) {}
 
-}
-
-Person.prototype.name = 'keivn';
+Person.prototype.name = "keivn";
 Person.prototype.getName = function () {
-    console.log(this.name);
+  console.log(this.name);
 };
 
 var person1 = new Person();
@@ -487,132 +744,96 @@ var person1 = new Person();
 
 // 缺点：1. 所有的属性和方法都共享 2. 不能初始化参数
 ```
-- 原型模式优化
-```js
-function Person(name) {
 
-}
+- 原型模式优化
+
+```js
+function Person(name) {}
 
 Person.prototype = {
-    name: 'kevin',
-    getName: function () {
-        console.log(this.name);
-    }
+  name: "kevin",
+  getName: function () {
+    console.log(this.name);
+  },
 };
 
 var person1 = new Person();
 // 优点：封装性好了一点
 // 缺点：重写了原型，丢失了constructor属性
 ```
-- 原型模式优化
-```js
-function Person(name) {
 
-}
+- 原型模式优化
+
+```js
+function Person(name) {}
 
 Person.prototype = {
-    constructor: Person,
-    name: 'kevin',
-    getName: function () {
-        console.log(this.name);
-    }
+  constructor: Person,
+  name: "kevin",
+  getName: function () {
+    console.log(this.name);
+  },
 };
 
 var person1 = new Person();
 // 优点：实例可以通过constructor属性找到所属构造函数
 // 缺点：原型模式该有的缺点还是有
 ```
+
 - 组合模式
+
 ```js
 // 构造函数模式与原型模式双剑合璧。
 function Person(name) {
-    this.name = name;
+  this.name = name;
 }
 
 Person.prototype = {
-    constructor: Person,
-    getName: function () {
-        console.log(this.name);
-    }
+  constructor: Person,
+  getName: function () {
+    console.log(this.name);
+  },
 };
 
 var person1 = new Person();
 // 优点：该共享的共享，该私有的私有，使用最广泛的方式
 // 缺点：有的人就是希望全部都写在一起，即更好的封装性
 ```
-- 动态原型模式
+
+- 寄生构造函数模式
+
 ```js
 function Person(name) {
-    this.name = name;
-    if (typeof this.getName != "function") {
-        Person.prototype.getName = function () {
-            console.log(this.name);
-        }
-    }
+  var o = new Object();
+  o.name = name;
+  o.getName = function () {
+    console.log(this.name);
+  };
+  return o;
 }
 
-var person1 = new Person();
-// 注意：使用动态原型模式时，不能用对象字面量重写原型
-// 解释下为什么：
-function Person(name) {
-    this.name = name;
-    if (typeof this.getName != "function") {
-        Person.prototype = {
-            constructor: Person,
-            getName: function () {
-                console.log(this.name);
-            }
-        }
-    }
-}
-
-var person1 = new Person('kevin');
-var person2 = new Person('daisy');
-
-// 报错 并没有该方法
-person1.getName();
-
-// 注释掉上面的代码，这句是可以执行的。
-person2.getName();
-// 为了解释这个问题，假设开始执行
-var person1 = new Person('kevin')。
-```
--  寄生构造函数模式
-```js
-function Person(name) {
-
-    var o = new Object();
-    o.name = name;
-    o.getName = function () {
-        console.log(this.name);
-    };
-
-    return o;
-
-}
-
-var person1 = new Person('kevin');
-console.log(person1 instanceof Person) // false
-console.log(person1 instanceof Object)  // true复制代码寄生构造函数模式，我个人认为应该这样读：
+var person1 = new Person("kevin");
+console.log(person1 instanceof Person); // false
+console.log(person1 instanceof Object); // true
+// 寄生构造函数模式，我个人认为应该这样读：
 // 寄生-构造函数-模式，也就是说寄生在构造函数的一种方法。
 // 也就是说打着构造函数的幌子挂羊头卖狗肉，你看创建的实例使用 instanceof 都无法指向构造函数！
 // 这样方法可以在特殊情况下使用。比如我们想创建一个具有额外方法的特殊数组，但是又不想直接修改Array构造函数，我们可以这样写：
 function SpecialArray() {
-    var values = new Array();
+  var values = new Array();
 
-    for (var i = 0, len = arguments.length; i < len; i++) {
-        values.push(arguments[i]);
-    }
+  for (var i = 0, len = arguments.length; i < len; i++) {
+    values.push(arguments[i]);
+  }
 
-    values.toPipedString = function () {
-        return this.join("|");
-    };
-    return values;
+  values.toPipedString = function () {
+    return this.join("|");
+  };
+  return values;
 }
 
-var colors = new SpecialArray('red', 'blue', 'green');
-var colors2 = SpecialArray('red2', 'blue2', 'green2');
-
+var colors = new SpecialArray("red", "blue", "green");
+var colors2 = SpecialArray("red2", "blue2", "green2");
 
 console.log(colors);
 console.log(colors.toPipedString()); // red|blue|green
@@ -623,22 +844,24 @@ console.log(colors2.toPipedString()); // red2|blue2|green2复制代码你会发�
 // 在可以使用其他模式的情况下，不要使用这种模式。
 // 但是值得一提的是，上面例子中的循环：
 for (var i = 0, len = arguments.length; i < len; i++) {
-    values.push(arguments[i]);
+  values.push(arguments[i]);
 }
-可以替换成：
+// 可以替换成：
 values.push.apply(values, arguments);
 ```
+
 - 稳妥构造函数模式
+
 ```js
-function person(name){
-    var o = new Object();
-    o.sayName = function(){
-        console.log(name);
-    };
-    return o;
+function person(name) {
+  var o = new Object();
+  o.sayName = function () {
+    console.log(name);
+  };
+  return o;
 }
 
-var person1 = person('kevin');
+var person1 = person("kevin");
 
 person1.sayName(); // kevin
 
