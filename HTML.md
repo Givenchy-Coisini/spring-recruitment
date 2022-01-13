@@ -217,4 +217,6 @@ shadow dom 中style 或者引入的css 不会对外部的元素造成影响
   - border 边框
   - margin 外边距
 - 盒模型主要有标准盒模型和ie盒模型
+  - 标准盒模型，给盒子设置宽高，实际设置的就是content内容区域的宽度和高度 content-box 内边距padding和边框border加上设置的宽高一起决定了盒子的大小。
+  - ie盒模型中，给盒子设置宽高，实际设置的是盒子的大小，包含的是border里面的所有宽度和高度  border-box
 
