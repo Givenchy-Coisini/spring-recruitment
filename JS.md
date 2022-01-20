@@ -410,7 +410,7 @@ W3C在HTML标准中规定，规定要求setTimeout中低于4ms的时间间隔算
 > await之前的代码相当于 promise中的构造函数的代码  await之后的代码相当于是Promsie的then的代码
 - 如何顺序执行 10 个异步任务
 - promiseA+规范
-
+- promise 缺点
 ## 7.详述节流和防抖
 
 - 手写节流和防抖
@@ -422,6 +422,7 @@ W3C在HTML标准中规定，规定要求setTimeout中低于4ms的时间间隔算
 ## 10.为什么需要深拷贝
 
 - 什么是浅拷贝
+- assgin是浅拷贝还是深拷贝
 
 ## 11.简述指针是什么
 
@@ -983,3 +984,13 @@ console.log(person1.name); // daisy
 ```
 ### 28.为什么引入TS TS有什么优势
 ### 29.TS中的Interface和Type的区别是什么
+
+## 30.for in 和for of 的区别
+
+## 31.TS的泛型出现是为了解决什么问题的
+
+## 32.let const var 的区别
+## 33. 箭头函数和普通函数的区别
+## 34.手写map map 的第二个参数
+## 35.事件处理机制
+- adeventLister（）
